@@ -5,6 +5,8 @@ import { chatRouter } from "./routes/chat.routes.js";
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 app.use(express.json({ limit: "10mb" }));
 
 app.get("/health", (req, res) => {
