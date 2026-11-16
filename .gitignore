@@ -1,0 +1,18 @@
+# Dependencies (NEVER push node_modules)
+node_modules/
+**/node_modules/
+
+# Environment variables & Secrets (Protects your Gmail password & JWT keys)
+.env
+**/.env
+.env*.local
+
+# Expo & Build artifacts
+.expo/
+dist/
+web-build/
+*.tsbuildinfo
+
+# OS files
+.DS_Store
+Thumbs.db
