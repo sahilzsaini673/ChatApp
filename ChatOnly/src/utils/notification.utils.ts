@@ -5,6 +5,8 @@ import API_BASE_URL from "@/config/api";
 import * as SecureStore from "expo-secure-store";
 import Constants from "expo-constants";
 
+const EAS_PROJECT_ID = "e56f313b-0b9a-4ce7-8de0-2dfe32eff108";
+
 // Configure how notifications appear when app is in foreground
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -16,6 +18,38 @@ Notifications.setNotificationHandler({
   }),
 });
 
+/**
+ * Sends a push token to the backend for the currently authenticated user
+ */
+export async function syncPushTokenWithBackend(pushToken?: string) {
+  try {
+    const tokenToSend = pushToken || (await SecureStore.getItemAsync("PUSH_TOKEN"));
+    const authToken = await SecureStore.getItemAsync("ACCESS_TOKEN_KEY");
+
+    if (!tokenToSend || !authToken) {
+      console.log("Cannot sync push token: missing pushToken or authToken");
+      return;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/users/push-token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken}`,
+      },
+      body: JSON.stringify({ pushToken: tokenToSend }),
+    });
+
+    const data = await response.json();
+    console.log("Push token sync result:", data);
+  } catch (error) {
+    console.error("Failed to sync push token with backend:", error);
+  }
+}
+
+/**
+ * Requests notification permission, retrieves Expo Push Token, and syncs with backend
+ */
 export async function registerForPushNotification() {
   if (!Device.isDevice) {
     console.log("Must use physical device for push notifications");
@@ -56,27 +90,24 @@ export async function registerForPushNotification() {
     }
   }
 
-  // 3. Get the unique Expo Push Token and send to backend
+  // 3. Get the unique Expo Push Token using explicit fallback project ID
   try {
     const projectId =
       Constants?.expoConfig?.extra?.eas?.projectId ??
-      Constants?.easConfig?.projectId;
+      Constants?.easConfig?.projectId ??
+      EAS_PROJECT_ID;
 
-    const tokenData = await Notifications.getExpoPushTokenAsync(
-      projectId ? { projectId } : undefined
-    );
+    const tokenData = await Notifications.getExpoPushTokenAsync({
+      projectId,
+    });
     const pushToken = tokenData.data;
+    console.log("Obtained Expo Push Token:", pushToken);
 
-    const authToken = await SecureStore.getItemAsync("ACCESS_TOKEN_KEY");
-    if (authToken && pushToken) {
-      await fetch(`${API_BASE_URL}/users/push-token`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authToken}`,
-        },
-        body: JSON.stringify({ pushToken }),
-      });
+    // Cache the push token locally in SecureStore
+    if (pushToken) {
+      await SecureStore.setItemAsync("PUSH_TOKEN", pushToken);
+      // Attempt to sync with backend
+      await syncPushTokenWithBackend(pushToken);
     }
   } catch (error) {
     console.error("Error obtaining push token:", error);

@@ -3,6 +3,7 @@ import { useRouter, useFocusEffect } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import ChatListView, { ChatItem } from "@/components/chat/ChatListView";
 import API_BASE_URL from "@/config/api";
+import { registerForPushNotification } from "@/utils/notification.utils";
 
 export default function ChatsScreen() {
   const router = useRouter();
@@ -53,6 +54,7 @@ export default function ChatsScreen() {
   useFocusEffect(
     useCallback(() => {
       fetchChats();
+      registerForPushNotification();
     }, [fetchChats])
   );
 
