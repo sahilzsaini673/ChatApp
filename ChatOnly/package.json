@@ -49,5 +49,10 @@
     "web": "expo start --web",
     "lint": "expo lint"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "unrs-resolver"
+    ]
+  },
   "private": true
 }

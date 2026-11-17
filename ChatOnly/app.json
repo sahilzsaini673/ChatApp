@@ -44,7 +44,11 @@
         "asyncRoutes": {
           "web": true
         }
+      },
+      "eas": {
+        "projectId": "e56f313b-0b9a-4ce7-8de0-2dfe32eff108"
       }
-    }
+    },
+    "owner": "sahilzsaini673"
   }
 }
