@@ -1,0 +1,9 @@
+packages:
+  - 'ChatOnly'
+
+nodeLinker: hoisted
+
+allowBuilds:
+  unrs-resolver: true
+
+dangerouslyAllowAllBuilds: true

@@ -91,7 +91,7 @@ const VerifyOtpView: React.FC<VerifyOtpViewProps> = ({
                 Verify Email
               </Text>
               <Text className="text-sm text-gray-500 mt-1 mb-1 leading-5">
-                We've sent a 6-digit verification code to
+                {"We've sent a 6-digit verification code to"}
               </Text>
               <Text className="text-sm font-bold text-indigo-600 mb-5">
                 {email || "your email address"}
@@ -180,7 +180,7 @@ const VerifyOtpView: React.FC<VerifyOtpViewProps> = ({
               {/* Resend Code Section */}
               <View className="flex-row items-center justify-center mt-6">
                 <Text className="text-sm text-gray-500">
-                  Didn't receive code?{" "}
+                  {"Didn't receive code? "}
                 </Text>
                 {resendCountdown > 0 ? (
                   <Text className="text-sm font-semibold text-gray-400">
