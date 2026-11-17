@@ -61,7 +61,7 @@ const register = async (req: Request, res: Response) => {
     await otpModel.create({ email: data.email, otpHash: hashOtp(rawOtp) });
 
     try {
-      await sendOtpEmail(data.email, rawOtp);
+      sendOtpEmail(data.email, rawOtp);
       console.log(`OTP sent to email: ${data.email}`);
     } catch (mailError) {
       console.log("⚠️ Email failed (Render blocks SMTP). Here is your OTP:");
