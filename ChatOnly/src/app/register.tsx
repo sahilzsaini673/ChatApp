@@ -42,7 +42,7 @@ export default function RegisterScreen() {
                 body: JSON.stringify({
                     name: name.trim(),
                     email: email.trim().toLowerCase(),
-                    password ,
+                    password,
                 }),
             });
 
@@ -51,7 +51,10 @@ export default function RegisterScreen() {
             if (data.success) {
                 router.push({
                     pathname: "/verify-otp" as any,
-                    params: { email: email.trim().toLowerCase() },
+                    params: {
+                        email: email.trim().toLowerCase(),
+                        devOtp: data.otp || "",
+                    },
                 });
             } else {
                 const errorMSG = data.message || "Registration failed";
@@ -75,7 +78,7 @@ export default function RegisterScreen() {
     }
 
     return (
-        <RegisterView 
+        <RegisterView
             name={name}
             setName={setName}
             email={email}

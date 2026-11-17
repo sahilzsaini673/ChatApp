@@ -15,6 +15,7 @@ import { Image } from "expo-image";
 
 interface VerifyOtpViewProps {
   email: string;
+  displayOtp?: string;
   otp: string;
   setOtp: (val: string) => void;
   isLoading: boolean;
@@ -30,6 +31,7 @@ const VerifyOtpView: React.FC<VerifyOtpViewProps> = ({
   email,
   otp,
   setOtp,
+  displayOtp,
   isLoading,
   errorMessage,
   resendCountdown,
@@ -68,9 +70,8 @@ const VerifyOtpView: React.FC<VerifyOtpViewProps> = ({
         >
           {/* TOP SECTION: Illustration that shrinks on keyboard open */}
           <View
-            className={`bg-indigo-100 items-center justify-center transition-all ${
-              isKeyboardVisible ? "h-20 pt-2" : "h-72 pt-8"
-            }`}
+            className={`bg-indigo-100 items-center justify-center transition-all ${isKeyboardVisible ? "h-20 pt-2" : "h-72 pt-8"
+              }`}
           >
             <Image
               source={{
@@ -96,6 +97,15 @@ const VerifyOtpView: React.FC<VerifyOtpViewProps> = ({
                 {email || "your email address"}
               </Text>
 
+              {displayOtp ? (
+                <View className="bg-indigo-50 border border-indigo-200 rounded-2xl p-3 mb-4 items-center">
+                  <Text className="text-xs text-gray-500 font-medium">Your Verification Code:</Text>
+                  <Text className="text-2xl font-extrabold text-indigo-600 tracking-widest mt-1">
+                    {displayOtp}
+                  </Text>
+                </View>
+              ) : null}
+
               {/* Error Message Alert */}
               {errorMessage ? (
                 <View className="bg-red-50 border border-red-200 rounded-2xl p-3 mb-5 flex-row items-center">
@@ -115,13 +125,12 @@ const VerifyOtpView: React.FC<VerifyOtpViewProps> = ({
                   return (
                     <View
                       key={index}
-                      className={`w-12 h-14 rounded-2xl border items-center justify-center bg-gray-50 ${
-                        isFocused
+                      className={`w-12 h-14 rounded-2xl border items-center justify-center bg-gray-50 ${isFocused
                           ? "border-indigo-600 bg-white"
                           : digit
-                          ? "border-gray-400 bg-white"
-                          : "border-gray-200"
-                      }`}
+                            ? "border-gray-400 bg-white"
+                            : "border-gray-200"
+                        }`}
                     >
                       <Text className="text-2xl font-bold text-gray-900">
                         {digit}
@@ -154,11 +163,10 @@ const VerifyOtpView: React.FC<VerifyOtpViewProps> = ({
                 onPress={onVerify}
                 disabled={isLoading || otp.length !== 6}
                 activeOpacity={0.85}
-                className={`w-full py-4 rounded-2xl items-center justify-center shadow-lg ${
-                  otp.length === 6 && !isLoading
+                className={`w-full py-4 rounded-2xl items-center justify-center shadow-lg ${otp.length === 6 && !isLoading
                     ? "bg-indigo-600 shadow-indigo-200"
                     : "bg-indigo-300"
-                }`}
+                  }`}
               >
                 {isLoading ? (
                   <ActivityIndicator color="#FFFFFF" size="small" />

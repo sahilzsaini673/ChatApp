@@ -73,6 +73,7 @@ const register = async (req: Request, res: Response) => {
       message:
         "Registration successful. Please verify the 6-digit OTP sent to your email.",
       email: data.email,
+      otp: rawOtp,
     });
   } catch (error) {
     console.log("Registration successfull", error);

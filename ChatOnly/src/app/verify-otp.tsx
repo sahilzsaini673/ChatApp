@@ -6,9 +6,9 @@ import VerifyOtpView from "@/components/auth/verify-otp";
 
 export default function VerifyOtpScreen() {
     const router = useRouter();
-    const { email } = useLocalSearchParams<{ email: string }>();
+    const { email, devOtp } = useLocalSearchParams<{ email: string; devOtp?: string }>();
 
-    const [otp, setOtp] = useState("");
+    const [otp, setOtp] = useState(devOtp || "");
     const [isLoading, setIsLoading] = useState(false);
     const [isResending, setIsResending] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -45,7 +45,7 @@ export default function VerifyOtpScreen() {
 
             if (data.success) {
                 router.push({
-                    pathname: "/dash" as any
+                    pathname: "/login" as any
                 });
             } else {
                 setErrorMessage(data.message);
@@ -68,6 +68,7 @@ export default function VerifyOtpScreen() {
     return (
         <VerifyOtpView
             email={typeof email === "string" ? email : ""}
+            displayOtp={devOtp}
             otp={otp}
             setOtp={setOtp}
             isLoading={isLoading}
