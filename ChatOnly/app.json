@@ -44,11 +44,7 @@
         "asyncRoutes": {
           "web": true
         }
-      },
-      "eas": {
-        "projectId": "8fe26f47-78da-4566-ad91-fc2f8847b0ec"
       }
-    },
-    "owner": "guylikeisaac"
+    }
   }
 }
