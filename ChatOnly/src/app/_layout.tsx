@@ -5,6 +5,7 @@ import { checkAuthStatus } from "@/utils/auth.utils";
 import "../../global.css";
 import * as Notifications from "expo-notifications";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { registerForPushNotification } from "@/utils/notification.utils";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -17,6 +18,7 @@ export default function RootLayout() {
         const isAuthenticated = await checkAuthStatus();
 
         if (isAuthenticated) {
+          registerForPushNotification();
           router.replace("/(tabs)" as any);
         }
       } catch (error) {

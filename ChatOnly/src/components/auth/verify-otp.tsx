@@ -43,15 +43,18 @@ const VerifyOtpView: React.FC<VerifyOtpViewProps> = ({
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
   useEffect(() => {
-    const showEvent = Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow";
-    const hideEvent = Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide";
-
-    const showSub = Keyboard.addListener(showEvent, () => setKeyboardVisible(true));
-    const hideSub = Keyboard.addListener(hideEvent, () => setKeyboardVisible(false));
+    const showSubscription = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillShow" : "keyboardDidShow",
+      () => setKeyboardVisible(true)
+    );
+    const hideSubscription = Keyboard.addListener(
+      Platform.OS === "ios" ? "keyboardWillHide" : "keyboardDidHide",
+      () => setKeyboardVisible(false)
+    );
 
     return () => {
-      showSub.remove();
-      hideSub.remove();
+      showSubscription.remove();
+      hideSubscription.remove();
     };
   }, []);
 

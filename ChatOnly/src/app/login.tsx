@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 import API_BASE_URL from "@/config/api";
 import * as SecureStore from "expo-secure-store";
 import LoginView from "@/components/auth/loginView";
+import { registerForPushNotification } from "@/utils/notification.utils";
 
 export default function LoginScreen() {
     const router = useRouter();
@@ -44,7 +45,7 @@ export default function LoginScreen() {
                 await SecureStore.setItemAsync("ACCESS_TOKEN_KEY", data.tokens.accessToken);
                 await SecureStore.setItemAsync("REFRESH_TOKEN_KEY", data.tokens.refreshToken);
                 await SecureStore.setItemAsync("CURRENT_USER_ID", data.user.id);
-                
+                await registerForPushNotification();
                 router.replace("/(tabs)" as any);
             } else {
                 setErrorMessage(data.message);
