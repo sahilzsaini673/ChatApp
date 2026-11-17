@@ -11,11 +11,19 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://chatapp-31r7.onrender.com/api/v1",
+        "EXPO_PUBLIC_SOCKET_URL": "https://chatapp-31r7.onrender.com"
       }
     },
     "production": {
       "android": {
         "buildType": "app-bundle"
+      },
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://chatapp-31r7.onrender.com/api/v1",
+        "EXPO_PUBLIC_SOCKET_URL": "https://chatapp-31r7.onrender.com"
       }
     }
   },
