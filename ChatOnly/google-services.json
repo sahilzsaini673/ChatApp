@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "219238550495",
+    "project_id": "chatonly-900b9",
+    "storage_bucket": "chatonly-900b9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:219238550495:android:3b796bfb4f537a5771526a",
+        "android_client_info": {
+          "package_name": "com.chatonly.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCtbiU64bsu8A-LKMcjDGKsvDdM3nmZ72I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

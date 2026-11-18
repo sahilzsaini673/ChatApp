@@ -12,6 +12,7 @@
     },
     "android": {
       "package": "com.chatonly.app",
+      "googleServicesFile": "./google-services.json",
       "softwareKeyboardLayoutMode": "resize",
       "adaptiveIcon": {
         "backgroundColor": "#0E1026",
