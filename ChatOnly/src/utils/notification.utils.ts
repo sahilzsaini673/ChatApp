@@ -1,6 +1,6 @@
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
-import { Platform } from "react-native";
+import { Alert, Platform } from "react-native";
 import API_BASE_URL from "@/config/api";
 import * as SecureStore from "expo-secure-store";
 import Constants from "expo-constants";
@@ -27,10 +27,15 @@ export async function syncPushTokenWithBackend(pushToken?: string) {
     const authToken = await SecureStore.getItemAsync("ACCESS_TOKEN_KEY");
 
     if (!tokenToSend || !authToken) {
-      console.log("Cannot sync push token: missing pushToken or authToken");
+      console.log("[PushToken] Cannot sync: missing token or authToken");
+      Alert.alert(
+        "Push Token Debug",
+        `Cannot sync.\npushToken: ${tokenToSend ? "✅" : "❌ missing"}\nauthToken: ${authToken ? "✅" : "❌ missing"}`
+      );
       return;
     }
 
+    console.log("[PushToken] Syncing with backend...");
     const response = await fetch(`${API_BASE_URL}/users/push-token`, {
       method: "POST",
       headers: {
@@ -41,9 +46,14 @@ export async function syncPushTokenWithBackend(pushToken?: string) {
     });
 
     const data = await response.json();
-    console.log("Push token sync result:", data);
+    console.log("[PushToken] Sync result:", JSON.stringify(data));
+    Alert.alert(
+      "Push Token Saved!",
+      `Status: ${response.status}\nResult: ${JSON.stringify(data)}\nToken: ${tokenToSend?.substring(0, 40)}...`
+    );
   } catch (error) {
-    console.error("Failed to sync push token with backend:", error);
+    console.error("[PushToken] Failed to sync with backend:", error);
+    Alert.alert("Push Token Sync Error", String(error));
   }
 }
 
@@ -51,8 +61,11 @@ export async function syncPushTokenWithBackend(pushToken?: string) {
  * Requests notification permission, retrieves Expo Push Token, and syncs with backend
  */
 export async function registerForPushNotification() {
+  console.log("[PushToken] registerForPushNotification called");
+
   if (!Device.isDevice) {
-    console.log("Must use physical device for push notifications");
+    console.log("[PushToken] Not a physical device, skipping");
+    Alert.alert("Push Token", "Must use physical device");
     return;
   }
 
@@ -60,21 +73,27 @@ export async function registerForPushNotification() {
   let finalStatus: string;
   try {
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    console.log("[PushToken] Existing permission status:", existingStatus);
     finalStatus = existingStatus;
 
     if (existingStatus !== "granted") {
       const { status } = await Notifications.requestPermissionsAsync();
+      console.log("[PushToken] Requested permission, new status:", status);
       finalStatus = status;
     }
   } catch (error) {
-    console.error("Failed to request notification permissions:", error);
+    console.error("[PushToken] Failed to request permissions:", error);
+    Alert.alert("Permission Error", String(error));
     return;
   }
 
   if (finalStatus !== "granted") {
-    console.log("Failed to get push token permission - user declined or not granted");
+    console.log("[PushToken] Permission not granted:", finalStatus);
+    Alert.alert("Push Token", `Permission not granted. Status: ${finalStatus}`);
     return;
   }
+
+  console.log("[PushToken] Permission granted! Setting up channel...");
 
   // 2. Set up Android Notification Channel safely (Android 8.0+)
   if (Platform.OS === "android") {
@@ -86,7 +105,7 @@ export async function registerForPushNotification() {
         lightColor: "#4F46E5",
       });
     } catch (channelError) {
-      console.warn("Could not set Android notification channel:", channelError);
+      console.warn("[PushToken] Could not set Android notification channel:", channelError);
     }
   }
 
@@ -97,19 +116,20 @@ export async function registerForPushNotification() {
       Constants?.easConfig?.projectId ??
       EAS_PROJECT_ID;
 
-    const tokenData = await Notifications.getExpoPushTokenAsync({
-      projectId,
-    });
-    const pushToken = tokenData.data;
-    console.log("Obtained Expo Push Token:", pushToken);
+    console.log("[PushToken] Getting token with projectId:", projectId);
 
-    // Cache the push token locally in SecureStore
+    const tokenData = await Notifications.getExpoPushTokenAsync({ projectId });
+    const pushToken = tokenData.data;
+    console.log("[PushToken] Obtained Expo Push Token:", pushToken);
+
     if (pushToken) {
       await SecureStore.setItemAsync("PUSH_TOKEN", pushToken);
-      // Attempt to sync with backend
       await syncPushTokenWithBackend(pushToken);
+    } else {
+      Alert.alert("Push Token", "getExpoPushTokenAsync returned empty token!");
     }
   } catch (error) {
-    console.error("Error obtaining push token:", error);
+    console.error("[PushToken] Error obtaining push token:", error);
+    Alert.alert("Get Token Error", String(error));
   }
 }
